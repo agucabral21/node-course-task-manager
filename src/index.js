@@ -9,12 +9,12 @@ const taskRouters = require("./routers/task");
 const app = express();
 const port = process.env.PORT || 3000;
 
-//middleware function para control de tokens
+/*
 app.use((req, res, next) => {
-  console.log(req.method, req.path);
-  next();
+  console.log("2");
+  res.status(503).send("Site Currently Down");
 });
-
+*/
 app.use(express.json());
 app.use(userRouters);
 app.use(taskRouters);
