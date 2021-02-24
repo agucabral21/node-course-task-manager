@@ -1,8 +1,6 @@
 const express = require("express");
-
 //establece la conexion con mongoose
 require("./db/mongoose");
-
 const userRouters = require("./routers/user");
 const taskRouters = require("./routers/task");
 
