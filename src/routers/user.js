@@ -3,9 +3,10 @@ const User = require("../models/user");
 const auth = require("../middleware/auth");
 const multer = require("multer");
 const sharp = require("sharp");
-
+const { sendWelcomeEmail, sendGoodbyeEmail } = require("../emails/account");
 const router = new express.Router();
 
+//middleware que controla subida de archivos
 const upload = multer({
   //dest: "avatars", //add this to save to de filesystem
   limits: { fileSize: 1000000 }, //1mb = 1mill bytes
@@ -34,6 +35,7 @@ router.post("/users", async (req, res) => {
   const user = new User(req.body);
   try {
     await user.save();
+    sendWelcomeEmail(user.email, user.name);
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (error) {
@@ -111,9 +113,11 @@ router.patch("/users/me", auth, async (req, res) => {
 });
 
 router.delete("/users/me", auth, async (req, res) => {
+  const user = req.user;
   try {
-    await req.user.remove();
-    res.send(req.user);
+    sendGoodbyeEmail(user.email, user.name);
+    await user.remove();
+    res.send(user);
   } catch (e) {
     res.status(500).send(e);
   }
